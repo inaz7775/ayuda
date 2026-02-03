@@ -19,8 +19,7 @@ class VistaMovimientos:
         ttk.Button(self.frame, text="Entrada", command=lambda: self.registrar("ENTRADA")).grid(row=2, column=0)
         ttk.Button(self.frame, text="Salida", command=lambda: self.registrar("SALIDA")).grid(row=2, column=1)
 
-        # Historial
-        columnas = ("id", "producto", "tipo", "cantidad", "fecha")
+        columnas = ("id", "id_producto", "tipo", "cantidad", "fecha")
         self.tree = ttk.Treeview(self.frame, columns=columnas, show="headings")
         for col in columnas:
             self.tree.heading(col, text=col.capitalize())
@@ -50,7 +49,7 @@ class VistaMovimientos:
         for mov in self.inventario.obtener_historial():
             self.tree.insert("", "end", values=(
                 mov.id_movimiento,
-                mov.producto.nombre,
+                mov.id_producto,
                 mov.tipo,
                 mov.cantidad,
                 mov.fecha.strftime("%Y-%m-%d %H:%M")

@@ -33,25 +33,33 @@ class VistaGestionProductos:
         self.e_color = ttk.Entry(self.frame)
         self.e_color.grid(row=5, column=1)
 
-        ttk.Label(self.frame, text="Stock:").grid(row=6, column=0)
-        self.e_stock = ttk.Entry(self.frame)
-        self.e_stock.grid(row=6, column=1)
+        ttk.Label(self.frame, text="Tallas (opcional, texto libre):").grid(row=6, column=0)
+        self.e_tallas = ttk.Entry(self.frame)
+        self.e_tallas.grid(row=6, column=1)
 
-        ttk.Button(self.frame, text="Agregar", command=self.agregar).grid(row=7, column=0)
-        ttk.Button(self.frame, text="Eliminar", command=self.eliminar).grid(row=7, column=1)
+        ttk.Label(self.frame, text="Stock:").grid(row=7, column=0)
+        self.e_stock = ttk.Entry(self.frame)
+        self.e_stock.grid(row=7, column=1)
+
+        ttk.Button(self.frame, text="Agregar", command=self.agregar).grid(row=8, column=0)
+        ttk.Button(self.frame, text="Eliminar", command=self.eliminar).grid(row=8, column=1)
 
     def agregar(self):
-        p = Producto(
-            self.e_id.get(),
-            self.e_nombre.get(),
-            self.e_categoria.get(),
-            int(self.e_stock.get() or 0),
-            descripcion=self.e_descripcion.get(),
-            marca=self.e_marca.get(),
-            color=self.e_color.get()
-        )
-        self.inventario.agregar_producto(p)
-        self.callback()
+        try:
+            p = Producto(
+                self.e_id.get(),
+                self.e_nombre.get(),
+                self.e_categoria.get(),
+                int(self.e_stock.get() or 0),
+                descripcion=self.e_descripcion.get(),
+                marca=self.e_marca.get(),
+                color=self.e_color.get(),
+                tallas=self.e_tallas.get()
+            )
+            self.inventario.agregar_producto(p)
+            self.callback()
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def eliminar(self):
         try:

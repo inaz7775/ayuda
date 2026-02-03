@@ -11,7 +11,7 @@ class VistaProductos:
         self.entry_buscar.grid(row=0, column=1)
         ttk.Button(self.frame, text="Filtrar", command=self.filtrar).grid(row=0, column=2)
 
-        columnas = ("id", "nombre", "categoria", "marca", "color", "stock")
+        columnas = ("id", "nombre", "categoria", "marca", "color", "tallas", "stock")
         self.tree = ttk.Treeview(self.frame, columns=columnas, show="headings")
         for col in columnas:
             self.tree.heading(col, text=col.capitalize())
@@ -28,9 +28,9 @@ class VistaProductos:
         for row in self.tree.get_children():
             self.tree.delete(row)
 
-        for p in self.inventario.productos.values():
+        for p in self.inventario.obtener_productos():
             self.tree.insert("", "end", values=(
-                p.id_producto, p.nombre, p.categoria, p.marca, p.color, p.stock_actual
+                p.id_producto, p.nombre, p.categoria, p.marca, p.color, p.tallas, p.stock_actual
             ))
 
     def filtrar(self):
@@ -39,10 +39,12 @@ class VistaProductos:
         for row in self.tree.get_children():
             self.tree.delete(row)
 
-        for p in self.inventario.productos.values():
-            if texto in p.nombre.lower() or texto in p.categoria.lower() or texto in p.marca.lower():
+        for p in self.inventario.obtener_productos():
+            if (texto in p.nombre.lower()
+                or texto in p.categoria.lower()
+                or texto in p.marca.lower()):
                 self.tree.insert("", "end", values=(
-                    p.id_producto, p.nombre, p.categoria, p.marca, p.color, p.stock_actual
+                    p.id_producto, p.nombre, p.categoria, p.marca, p.color, p.tallas, p.stock_actual
                 ))
 
     def modificar(self):
@@ -51,8 +53,7 @@ class VistaProductos:
             messagebox.showerror("Error", "Selecciona un producto")
             return
 
-        id_p, nombre, categoria, marca, color, stock = self.tree.item(item)["values"]
-        p = self.inventario.productos[id_p]
+        id_p, nombre, categoria, marca, color, tallas, stock = self.tree.item(item)["values"]
 
         top = ttk.Toplevel(self.frame)
         top.title("Modificar producto")
@@ -74,7 +75,6 @@ class VistaProductos:
 
         ttk.Label(top, text="Descripción:").grid(row=3, column=0)
         e_desc = ttk.Entry(top)
-        e_desc.insert(0, p.descripcion)
         e_desc.grid(row=3, column=1)
 
         ttk.Label(top, text="Color:").grid(row=4, column=0)
@@ -82,10 +82,15 @@ class VistaProductos:
         e_color.insert(0, color)
         e_color.grid(row=4, column=1)
 
-        ttk.Label(top, text="Stock:").grid(row=5, column=0)
+        ttk.Label(top, text="Tallas:").grid(row=5, column=0)
+        e_tallas = ttk.Entry(top)
+        e_tallas.insert(0, tallas)
+        e_tallas.grid(row=5, column=1)
+
+        ttk.Label(top, text="Stock:").grid(row=6, column=0)
         e_stock = ttk.Entry(top)
         e_stock.insert(0, stock)
-        e_stock.grid(row=5, column=1)
+        e_stock.grid(row=6, column=1)
 
         def guardar():
             self.inventario.modificar_producto(
@@ -95,9 +100,10 @@ class VistaProductos:
                 int(e_stock.get()),
                 e_desc.get(),
                 e_marca.get(),
-                e_color.get()
+                e_color.get(),
+                e_tallas.get()
             )
             self.refrescar()
             top.destroy()
 
-        ttk.Button(top, text="Guardar", command=guardar).grid(row=6, column=0, columnspan=2)
+        ttk.Button(top, text="Guardar", command=guardar).grid(row=7, column=0, columnspan=2)
